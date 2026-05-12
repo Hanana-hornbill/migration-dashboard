@@ -1,19 +1,50 @@
-node_modules/
-target/
-_out/
-gen/
+# .gitignore
 
-.cdsrc-private.json
-default-*.json
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# CDS / CAP generated files
+gen/
+.sqlite
+*.db
 *.sqlite
 
-# MTA
-mta_archives/
-*_mta_build_tmp
-*.mtar
+# Environment files
+.env
+.env.*
 
-# Other
+# Logs
+logs/
+*.log
+
+# OS files
 .DS_Store
+Thumbs.db
 
-# @cap-js/cds-typer
-@cds-models
+# VS Code
+.vscode/
+.history/
+
+# Build output
+dist/
+build/
+out/
+
+# Temporary files
+tmp/
+temp/
+
+# Coverage
+coverage/
+
+# SAP BAS / local configs
+.mta/
+target/
+
+# IDE files
+.idea/
+*.iml
