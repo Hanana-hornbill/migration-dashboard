@@ -1,0 +1,172 @@
+<mvc:View
+    controllerName="migrationdashboard.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt">
+
+    <tnt:ToolPage>
+
+        <!-- Sidebar -->
+        <tnt:sideContent>
+
+            <tnt:SideNavigation>
+
+                <tnt:NavigationList>
+
+                    <tnt:NavigationListItem
+                        text="Assessment Agent"
+                        select="onAssessmentPress"/>
+
+                    <tnt:NavigationListItem
+                        text="Pre-Migration Agent"
+                        select="onPreMigrationPress"/>
+
+                    <tnt:NavigationListItem
+                        text="Migration Agent"
+                        select="onMigrationPress"/>
+
+                    <tnt:NavigationListItem
+                        text="Migration Validation Agent"
+                        select="onValidationPress"/>
+
+                </tnt:NavigationList>
+
+            </tnt:SideNavigation>
+
+        </tnt:sideContent>
+
+        <!-- Main Content -->
+        <tnt:mainContents>
+
+            <App id="mainApp">
+
+                <!-- Assessment Page -->
+                <Page
+                    id="assessmentPage"
+                    title="Assessment Dashboard">
+
+                    <content>
+
+                        <VBox class="sapUiSmallMargin">
+
+                            <Title text="Connect to SAP HANA"/>
+
+                            <Input
+                                id="hostInput"
+                                placeholder="HANA Host"/>
+
+                            <Input
+                                id="portInput"
+                                placeholder="Port"/>
+
+                            <Input
+                                id="userInput"
+                                placeholder="Username"/>
+
+                            <Input
+                                id="passwordInput"
+                                type="Password"
+                                placeholder="Password"/>
+
+                            <Button
+                                text="Connect"
+                                press="onConnect"/>
+
+                        </VBox>
+
+                        <HBox
+                            class="sapUiMediumMarginTop"
+                            wrap="Wrap">
+
+                            <GenericTile
+                                header="Database Users"
+                                class="sapUiTinyMargin">
+
+                                <TileContent>
+                                    <NumericContent value="{metrics>/users}"/>
+                                </TileContent>
+
+                            </GenericTile>
+
+                            <GenericTile
+                                header="Tables"
+                                class="sapUiTinyMargin">
+
+                                <TileContent>
+                                    <NumericContent value="{metrics>/tables}"/>
+                                </TileContent>
+
+                            </GenericTile>
+
+                            <GenericTile
+                                header="Schemas"
+                                class="sapUiTinyMargin">
+
+                                <TileContent>
+                                    <NumericContent value="{metrics>/schemas}"/>
+                                </TileContent>
+
+                            </GenericTile>
+
+                            <GenericTile
+                                header="Database Size"
+                                class="sapUiTinyMargin">
+
+                                <TileContent>
+                                    <NumericContent value="{metrics>/dbSize}"/>
+                                </TileContent>
+
+                            </GenericTile>
+
+                        </HBox>
+
+                    </content>
+
+                </Page>
+
+                <!-- Pre Migration -->
+                <Page
+                    id="preMigrationPage"
+                    title="Pre-Migration Agent">
+
+                    <content>
+                        <Title
+                            text="Pre-Migration Agent Page"
+                            class="sapUiMediumMargin"/>
+                    </content>
+
+                </Page>
+
+                <!-- Migration -->
+                <Page
+                    id="migrationPage"
+                    title="Migration Agent">
+
+                    <content>
+                        <Title
+                            text="Migration Agent Page"
+                            class="sapUiMediumMargin"/>
+                    </content>
+
+                </Page>
+
+                <!-- Validation -->
+                <Page
+                    id="validationPage"
+                    title="Migration Validation Agent">
+
+                    <content>
+                        <Title
+                            text="Migration Validation Agent Page"
+                            class="sapUiMediumMargin"/>
+                    </content>
+
+                </Page>
+
+            </App>
+
+        </tnt:mainContents>
+
+    </tnt:ToolPage>
+
+</mvc:View>

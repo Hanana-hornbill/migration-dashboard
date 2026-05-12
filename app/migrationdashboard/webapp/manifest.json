@@ -1,0 +1,98 @@
+{
+  "_version": "1.84.0",
+  "sap.app": {
+    "id": "migrationdashboard",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.23.0",
+      "toolsId": "792568ab-8d04-4766-9ff8-0714497b34e0"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.147.2",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "migrationdashboard.migrationdashboard.i18n.i18n"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "migrationdashboard.migrationdashboard.view",
+        "async": true,
+        "viewPath": "migrationdashboard.migrationdashboard.view"
+      },
+      "routes": [
+        {
+          "name": "Routexml",
+          "pattern": ":?query:",
+          "target": [
+            "Targetxml"
+          ]
+        }
+      ],
+      "targets": {
+        "Targetxml": {
+          "id": "xml",
+          "name": "xml"
+        }
+      }
+    },
+    "rootView": {
+    "viewName": "migrationdashboard.view.App",
+    "type": "XML",
+    "async": true,
+    "id": "app"
+}
+  }
+}

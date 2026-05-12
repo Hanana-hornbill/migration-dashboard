@@ -1,0 +1,77 @@
+<mvc:View
+    controllerName="demoproject.controller.Assessment"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+<Page id="assessmentPage" title="Assessment Agent">
+
+    <content>
+
+        <VBox class="sapUiSmallMargin">
+
+            <Title text="Connect to SAP HANA"/>
+
+            <Input
+                id="hostInput"
+                placeholder="HANA Host"/>
+
+            <Input
+                id="portInput"
+                placeholder="Port"/>
+
+            <Input
+                id="userInput"
+                placeholder="Username"/>
+
+            <Input
+                id="passwordInput"
+                type="Password"
+                placeholder="Password"/>
+
+            <Button
+                text="Connect"
+                press="onConnect"/>
+
+        </VBox>
+
+        <HBox
+            class="sapUiMediumMarginTop"
+            wrap="Wrap">
+
+            <GenericTile
+                header="Database Users"
+                class="sapUiTinyMargin">
+
+                <TileContent>
+                    <NumericContent value="{metrics>/users}"/>
+                </TileContent>
+
+            </GenericTile>
+
+            <GenericTile
+                header="Tables"
+                class="sapUiTinyMargin">
+
+                <TileContent>
+                    <NumericContent value="{metrics>/tables}"/>
+                </TileContent>
+
+            </GenericTile>
+
+            <GenericTile
+                header="Schemas"
+                class="sapUiTinyMargin">
+
+                <TileContent>
+                    <NumericContent value="{metrics>/schemas}"/>
+                </TileContent>
+
+            </GenericTile>
+
+        </HBox>
+
+    </content>
+
+</Page>
+
+</mvc:View>
