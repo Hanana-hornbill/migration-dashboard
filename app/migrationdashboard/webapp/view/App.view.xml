@@ -6,6 +6,52 @@
 
     <tnt:ToolPage>
 
+        <!-- Header -->
+        <tnt:header>
+
+    <tnt:ToolHeader>
+
+        <Button
+            icon="sap-icon://menu2"
+            type="Transparent"/>
+
+        <Image
+            src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"
+            height="2rem"
+            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+        <Title
+            text="HANA Cloud Migration Assistant"
+            level="H3"/>
+
+        <ToolbarSpacer/>
+
+        <SearchField
+            width="25rem"
+            placeholder='Try quick actions like "Start assessment"'/>
+
+        <ToolbarSpacer/>
+
+        <Button
+            icon="sap-icon://world"
+            type="Transparent"/>
+
+        <Button
+            icon="sap-icon://bell"
+            type="Transparent"/>
+
+        <Button
+            icon="sap-icon://history"
+            type="Transparent"/>
+
+        <Avatar
+            initials="AN"
+            class="sapUiTinyMarginBegin"/>
+
+    </tnt:ToolHeader>
+
+</tnt:header>
+
         <!-- Sidebar -->
         <tnt:sideContent>
 
@@ -47,6 +93,17 @@
 
                     <content>
 
+                        
+
+                        <!-- Main Title -->
+                        <Title
+                            text="Assessment Results"
+                            level="H1"
+                            class="sapUiSmallMargin"/>
+
+                        
+
+                        <!-- Connection Form -->
                         <VBox class="sapUiSmallMargin">
 
                             <Title text="Connect to SAP HANA"/>
@@ -74,6 +131,7 @@
 
                         </VBox>
 
+                        <!-- Dashboard Cards -->
                         <HBox
                             class="sapUiMediumMarginTop"
                             wrap="Wrap">
@@ -108,15 +166,7 @@
 
                             </GenericTile>
 
-                            <GenericTile
-                                header="Database Size"
-                                class="sapUiTinyMargin">
-
-                                <TileContent>
-                                    <NumericContent value="{metrics>/dbSize}"/>
-                                </TileContent>
-
-                            </GenericTile>
+                           
 
                         </HBox>
 
@@ -124,41 +174,47 @@
 
                 </Page>
 
-                <!-- Pre Migration -->
+                <!-- Pre-Migration Page -->
                 <Page
                     id="preMigrationPage"
                     title="Pre-Migration Agent">
 
                     <content>
+
                         <Title
                             text="Pre-Migration Agent Page"
                             class="sapUiMediumMargin"/>
+
                     </content>
 
                 </Page>
 
-                <!-- Migration -->
+                <!-- Migration Page -->
                 <Page
                     id="migrationPage"
                     title="Migration Agent">
 
                     <content>
+
                         <Title
                             text="Migration Agent Page"
                             class="sapUiMediumMargin"/>
+
                     </content>
 
                 </Page>
 
-                <!-- Validation -->
+                <!-- Validation Page -->
                 <Page
                     id="validationPage"
                     title="Migration Validation Agent">
 
                     <content>
+
                         <Title
                             text="Migration Validation Agent Page"
                             class="sapUiMediumMargin"/>
+
                     </content>
 
                 </Page>

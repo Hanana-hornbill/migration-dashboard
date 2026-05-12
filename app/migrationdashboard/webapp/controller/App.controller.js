@@ -18,91 +18,93 @@ sap.ui.define([
             });
 
             this.getView().setModel(model, "metrics");
+
             this.byId("mainApp")
-    .to(this.byId("assessmentPage"));
+                .to(this.byId("assessmentPage"));
 
         },
+
         onAssessmentPress: function () {
 
-    this.byId("mainApp")
-        .to(this.byId("assessmentPage"));
+            this.byId("mainApp")
+                .to(this.byId("assessmentPage"));
 
-},
+        },
 
-onPreMigrationPress: function () {
+        onPreMigrationPress: function () {
 
-    this.byId("mainApp")
-        .to(this.byId("preMigrationPage"));
+            this.byId("mainApp")
+                .to(this.byId("preMigrationPage"));
 
-},
+        },
 
-onMigrationPress: function () {
+        onMigrationPress: function () {
 
-    this.byId("mainApp")
-        .to(this.byId("migrationPage"));
+            this.byId("mainApp")
+                .to(this.byId("migrationPage"));
 
-},
+        },
 
-onValidationPress: function () {
+        onValidationPress: function () {
 
-    this.byId("mainApp")
-        .to(this.byId("validationPage"));
+            this.byId("mainApp")
+                .to(this.byId("validationPage"));
 
-},
+        },
 
         onConnect: async function () {
 
-    const host = this.byId("hostInput").getValue();
-    const port = this.byId("portInput").getValue();
-    const user = this.byId("userInput").getValue();
-    const password = this.byId("passwordInput").getValue();
+            const host = this.byId("hostInput").getValue();
+            const port = this.byId("portInput").getValue();
+            const user = this.byId("userInput").getValue();
+            const password = this.byId("passwordInput").getValue();
 
-    try {
+            try {
 
-        const response = await fetch("/assessment", {
+                const response = await fetch("/assessment", {
 
-            method: "POST",
+                    method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-            body: JSON.stringify({
-                host,
-                port,
-                user,
-                password
-            })
+                    body: JSON.stringify({
+                        host,
+                        port,
+                        user,
+                        password
+                    })
 
-        });
+                });
 
-        const result = await response.json();
+                const result = await response.json();
 
-        console.log(result);
+                console.log(result);
 
-        if (result.success) {
+                if (result.success) {
 
-            this.getView()
-                .getModel("metrics")
-                .setData(result.data);
+                    this.getView()
+                        .getModel("metrics")
+                        .setData(result.data);
 
-            sap.m.MessageToast.show("Assessment Complete");
+                    MessageToast.show("Assessment Complete");
 
-        } else {
+                } else {
 
-            sap.m.MessageToast.show(result.error);
+                    MessageToast.show(result.error);
+
+                }
+
+            } catch (err) {
+
+                console.error(err);
+
+                MessageToast.show("Connection Failed");
+
+            }
 
         }
-
-    } catch (err) {
-
-        console.error(err);
-
-        sap.m.MessageToast.show("Connection Failed");
-
-    }
-
-}
 
     });
 

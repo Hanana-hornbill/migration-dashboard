@@ -43,7 +43,7 @@ cds.on('bootstrap', (app) => {
                                     results.schemas =
                                         schemaResult?.[0]?.SCHEMAS || 0;
 
-                                    results.dbSize = "Connected";
+                                    //results.dbSize = "Connected";
 
                                     res.json({
                                         success: true,
