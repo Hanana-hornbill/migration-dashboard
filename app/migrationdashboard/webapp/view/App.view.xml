@@ -86,140 +86,261 @@
 
             <App id="mainApp">
 
-                <!-- Assessment Page -->
-                <Page
-                    id="assessmentPage"
-                    title="Assessment Dashboard">
+    <!-- ===================================== -->
+    <!-- HOME PAGE -->
+    <!-- ===================================== -->
 
-                    <content>
+    <Page
+        id="homePage"
+        title="Migration Dashboard">
 
-                        
+        <content>
 
-                        <!-- Main Title -->
-                        <Title
-                            text="Assessment Results"
-                            level="H1"
-                            class="sapUiSmallMargin"/>
+            <VBox class="sapUiMediumMargin">
 
-                        
+                <Title
+                    text="Welcome to Migration Dashboard"
+                    level="H2" />
 
-                        <!-- Connection Form -->
-                        <VBox class="sapUiSmallMargin">
+                <Text
+                    text="Manage and assess SAP HANA databases dynamically." />
 
-                            <Title text="Connect to SAP HANA"/>
+                <Button
+                    text="Connect Database"
+                    icon="sap-icon://database"
+                    press="onOpenConnectPage"
+                    class="sapUiSmallMarginTop" />
 
-                            <Input
-                                id="hostInput"
-                                placeholder="HANA Host"/>
+                <Button
+                    text="Saved Connections"
+                    icon="sap-icon://table-view"
+                    press="onOpenSavedConnections"
+                    class="sapUiSmallMarginTop" />
 
-                            <Input
-                                id="portInput"
-                                placeholder="Port"/>
+            </VBox>
 
-                            <Input
-                                id="userInput"
-                                placeholder="Username"/>
+        </content>
 
-                            <Input
-                                id="passwordInput"
-                                type="Password"
-                                placeholder="Password"/>
+    </Page>
 
-                            <Button
-                                text="Connect"
-                                press="onConnect"/>
+    <!-- ===================================== -->
+    <!-- CONNECT DATABASE PAGE -->
+    <!-- ===================================== -->
 
-                        </VBox>
+    <Page
+        id="connectPage"
+        title="Connect Database"
+        showNavButton="true"
+        navButtonPress="onNavBack">
 
-                        <!-- Dashboard Cards -->
-                        <HBox
-                            class="sapUiMediumMarginTop"
-                            wrap="Wrap">
+        <content>
 
-                            <GenericTile
-                                header="Database Users"
-                                class="sapUiTinyMargin">
+            <VBox class="sapUiMediumMargin">
 
-                                <TileContent>
-                                    <NumericContent value="{metrics>/users}"/>
-                                </TileContent>
+                <Label text="Host" />
 
-                            </GenericTile>
+                <Input
+                    id="hostInput"
+                    placeholder="Enter Host" />
 
-                            <GenericTile
-                                header="Tables"
-                                class="sapUiTinyMargin">
+                <Label text="Port" />
 
-                                <TileContent>
-                                    <NumericContent value="{metrics>/tables}"/>
-                                </TileContent>
+                <Input
+                    id="portInput"
+                    placeholder="443" />
 
-                            </GenericTile>
+                <Label text="Username" />
 
-                            <GenericTile
-                                header="Schemas"
-                                class="sapUiTinyMargin">
+                <Input
+                    id="userInput"
+                    placeholder="DBADMIN" />
 
-                                <TileContent>
-                                    <NumericContent value="{metrics>/schemas}"/>
-                                </TileContent>
+                <Label text="Password" />
 
-                            </GenericTile>
+                <Input
+                    id="passwordInput"
+                    type="Password"
+                    placeholder="Enter Password" />
 
-                           
+                <Button
+                    text="Connect"
+                    type="Emphasized"
+                    press="onConnect"
+                    class="sapUiSmallMarginTop" />
 
-                        </HBox>
+            </VBox>
 
-                    </content>
+        </content>
 
-                </Page>
+    </Page>
 
-                <!-- Pre-Migration Page -->
-                <Page
-                    id="preMigrationPage"
-                    title="Pre-Migration Agent">
+    <!-- ===================================== -->
+    <!-- ASSESSMENT RESULTS PAGE -->
+    <!-- ===================================== -->
 
-                    <content>
+    <Page
+        id="assessmentPage"
+        title="Assessment Results"
+        showNavButton="true"
+        navButtonPress="onNavBack">
 
-                        <Title
-                            text="Pre-Migration Agent Page"
-                            class="sapUiMediumMargin"/>
+        <content>
 
-                    </content>
+            <HBox
+                wrap="Wrap"
+                class="sapUiMediumMargin">
 
-                </Page>
+                <GenericTile
+                    header="Users">
 
-                <!-- Migration Page -->
-                <Page
-                    id="migrationPage"
-                    title="Migration Agent">
+                    <TileContent>
 
-                    <content>
+                        <NumericContent
+                            value="{metrics>/users}" />
 
-                        <Title
-                            text="Migration Agent Page"
-                            class="sapUiMediumMargin"/>
+                    </TileContent>
 
-                    </content>
+                </GenericTile>
 
-                </Page>
+                <GenericTile
+                    header="Tables">
 
-                <!-- Validation Page -->
-                <Page
-                    id="validationPage"
-                    title="Migration Validation Agent">
+                    <TileContent>
 
-                    <content>
+                        <NumericContent
+                            value="{metrics>/tables}" />
 
-                        <Title
-                            text="Migration Validation Agent Page"
-                            class="sapUiMediumMargin"/>
+                    </TileContent>
 
-                    </content>
+                </GenericTile>
 
-                </Page>
+                <GenericTile
+                    header="Schemas">
 
-            </App>
+                    <TileContent>
+
+                        <NumericContent
+                            value="{metrics>/schemas}" />
+
+                    </TileContent>
+
+                </GenericTile>
+
+            </HBox>
+
+        </content>
+
+    </Page>
+
+    <!-- ===================================== -->
+    <!-- SAVED CONNECTIONS PAGE -->
+    <!-- ===================================== -->
+
+    <Page
+        id="savedConnectionsPage"
+        title="Saved Connections"
+        showNavButton="true"
+        navButtonPress="onNavBack">
+
+        <content>
+
+            <Table
+                items="{connections>/}">
+
+                <columns>
+
+                    <Column>
+                        <Text text="Instance" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Host" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Status" />
+                    </Column>
+
+                </columns>
+
+                <items>
+
+                    <ColumnListItem
+                        type="Active"
+                        press="onConnectionSelect">
+
+                        <cells>
+
+                            <Text
+                                text="{connections>INSTANCE_NAME}" />
+
+                            <Text
+                                text="{connections>HOSTNAME}" />
+
+                            <Text
+                                text="{connections>STATUS}" />
+
+                        </cells>
+
+                    </ColumnListItem>
+
+                </items>
+
+            </Table>
+
+        </content>
+
+    </Page>
+
+    <!-- ===================================== -->
+    <!-- PRE-MIGRATION PAGE -->
+    <!-- ===================================== -->
+
+    <Page
+        id="preMigrationPage"
+        title="Pre-Migration">
+
+        <content>
+
+            <VBox class="sapUiMediumMargin">
+
+                <Title
+                    text="Pre-Migration Module" />
+
+                <Text
+                    text="Coming Soon..." />
+
+            </VBox>
+
+        </content>
+
+    </Page>
+
+    <!-- ===================================== -->
+    <!-- VALIDATION PAGE -->
+    <!-- ===================================== -->
+
+    <Page
+        id="validationPage"
+        title="Validation">
+
+        <content>
+
+            <VBox class="sapUiMediumMargin">
+
+                <Title
+                    text="Validation Module" />
+
+                <Text
+                    text="Coming Soon..." />
+
+            </VBox>
+
+        </content>
+
+    </Page>
+
+</App>
 
         </tnt:mainContents>
 

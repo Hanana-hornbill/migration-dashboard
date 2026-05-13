@@ -8,21 +8,170 @@ sap.ui.define([
 
     return Controller.extend("migrationdashboard.controller.App", {
 
+        // =========================================
+        // INITIALIZATION
+        // =========================================
+
         onInit: function () {
 
-            const model = new JSONModel({
-                users: 0,
-                tables: 0,
-                schemas: 0,
-                dbSize: 0
-            });
+    // -------------------------------------
+    // CHECK SESSION
+    // -------------------------------------
+            const connectionModel =
+    new JSONModel([]);
 
-            this.getView().setModel(model, "metrics");
+this.getView().setModel(
+    connectionModel,
+    "connections"
+);
+this.loadConnections();
+    const isLoggedIn =
+        localStorage.getItem("isLoggedIn");
 
-            this.byId("mainApp")
-                .to(this.byId("assessmentPage"));
+    // -------------------------------------
+    // LOAD SAVED METRICS
+    // -------------------------------------
 
-        },
+    let savedMetrics = {
+
+        users: 0,
+
+        tables: 0,
+
+        schemas: 0,
+
+        dbSize: 0
+
+    };
+
+    const storedMetrics =
+        localStorage.getItem("metricsData");
+
+    if (storedMetrics) {
+
+        savedMetrics =
+            JSON.parse(storedMetrics);
+
+    }
+
+    // -------------------------------------
+    // CREATE MODEL
+    // -------------------------------------
+
+    const model = new JSONModel(
+        savedMetrics
+    );
+
+    this.getView().setModel(
+        model,
+        "metrics"
+    );
+
+    // -------------------------------------
+    // WELCOME MESSAGE
+    // -------------------------------------
+
+    if (isLoggedIn === "true") {
+
+        MessageToast.show(
+            "Welcome Back"
+        );
+
+    }
+
+    // -------------------------------------
+    // DEFAULT PAGE
+    // -------------------------------------
+
+    this.byId("mainApp")
+        .to(this.byId("assessmentPage"));
+
+},
+loadConnections: async function () {
+
+    try {
+
+        const response =
+            await fetch("/connections");
+
+        const result =
+            await response.json();
+
+        if (result.success) {
+
+            this.getView()
+                .getModel("connections")
+                .setData(result.data);
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+},
+onOpenConnectPage: function () {
+
+    this.byId("mainApp")
+        .to(this.byId("connectPage"));
+
+},
+onOpenSavedConnections: function () {
+
+    this.loadConnections();
+
+    this.byId("mainApp")
+        .to(this.byId("savedConnectionsPage"));
+
+},
+onNavBack: function () {
+
+    this.byId("mainApp")
+        .back();
+
+},
+onConnectionSelect: function (oEvent) {
+
+    const item =
+        oEvent.getSource();
+
+    const data =
+        item.getBindingContext(
+            "connections"
+        ).getObject();
+
+    console.log(data);
+
+    // ---------------------------------
+    // AUTO-FILL INPUTS
+    // ---------------------------------
+
+    this.byId("hostInput")
+        .setValue(data.HOSTNAME);
+
+    this.byId("portInput")
+        .setValue(data.PORT);
+
+    this.byId("userInput")
+        .setValue(data.USERID);
+
+    this.byId("passwordInput")
+        .setValue(data.PASSWORD);
+
+    // ---------------------------------
+    // OPTIONAL AUTO CONNECT
+    // ---------------------------------
+
+    this.onConnect();
+    this.byId("mainApp")
+    .to(this.byId("assessmentPage"));
+
+},
+        // =========================================
+        // SIDEBAR NAVIGATION
+        // =========================================
 
         onAssessmentPress: function () {
 
@@ -52,55 +201,152 @@ sap.ui.define([
 
         },
 
+        // =========================================
+        // LOGOUT
+        // =========================================
+
+        onLogout: function () {
+
+            localStorage.clear();
+
+            MessageToast.show("Logged Out");
+
+        },
+
+        // =========================================
+        // CONNECT TO DATABASE
+        // =========================================
+
         onConnect: async function () {
 
-            const host = this.byId("hostInput").getValue();
-            const port = this.byId("portInput").getValue();
-            const user = this.byId("userInput").getValue();
-            const password = this.byId("passwordInput").getValue();
+            // -------------------------------------
+            // GET INPUT VALUES
+            // -------------------------------------
+
+            const host =
+                this.byId("hostInput").getValue();
+
+            const port =
+                this.byId("portInput").getValue();
+
+            const user =
+                this.byId("userInput").getValue();
+
+            const password =
+                this.byId("passwordInput").getValue();
 
             try {
 
-                const response = await fetch("/assessment", {
+                // -------------------------------------
+                // CALL BACKEND API
+                // -------------------------------------
 
-                    method: "POST",
+                const response = await fetch(
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    "/assessment",
 
-                    body: JSON.stringify({
-                        host,
-                        port,
-                        user,
-                        password
-                    })
+                    {
 
-                });
+                        method: "POST",
 
-                const result = await response.json();
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            host,
+
+                            port,
+
+                            user,
+
+                            password
+
+                        })
+
+                    }
+
+                );
+
+                const result =
+                    await response.json();
 
                 console.log(result);
 
+                // -------------------------------------
+                // SUCCESS
+                // -------------------------------------
+
                 if (result.success) {
+
+                    // UPDATE DASHBOARD
 
                     this.getView()
                         .getModel("metrics")
                         .setData(result.data);
+                    this.byId("mainApp")
+                        .to(this.byId("assessmentPage"));
+                    // SAVE SESSION
 
-                    MessageToast.show("Assessment Complete");
+                    localStorage.setItem(
+                        "isLoggedIn",
+                        "true"
+                    );
 
-                } else {
+                    localStorage.setItem(
+                        "dbUser",
+                        user
+                    );
 
-                    MessageToast.show(result.error);
+                    localStorage.setItem(
+                        "dbHost",
+                        host
+                    );
+
+                    // SAVE METRICS
+
+                    localStorage.setItem(
+
+                        "metricsData",
+
+                        JSON.stringify(result.data)
+
+                    );
+
+                    MessageToast.show(
+                        "Assessment Complete"
+                    );
+
+                }
+                // -------------------------------------
+                // BACKEND ERROR
+                // -------------------------------------
+
+                else {
+
+                    MessageToast.show(
+                        result.error
+                    );
 
                 }
 
-            } catch (err) {
+            }
+
+            // -----------------------------------------
+            // NETWORK / SERVER ERROR
+            // -----------------------------------------
+
+            catch (err) {
 
                 console.error(err);
 
-                MessageToast.show("Connection Failed");
+                MessageToast.show(
+                    "Connection Failed"
+                );
 
             }
 
