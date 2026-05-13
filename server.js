@@ -1,6 +1,8 @@
+require('dotenv').config();
 const cds = require('@sap/cds');
 const express = require('express');
 const hana = require('@sap/hana-client');
+
 
 cds.on('bootstrap', (app) => {
 
@@ -12,14 +14,13 @@ cds.on('bootstrap', (app) => {
 
     const APP_DB_CONFIG = {
 
-        serverNode:
-            "a908839a-b89a-48b1-a5ca-18c1997f22be.hana.prod-ap21.hanacloud.ondemand.com:443",
+        serverNode:`${process.env.APP_DB_HOST}:${process.env.APP_DB_PORT}`,
 
         uid:
-            "DBADMIN",
+            process.env.APP_DB_USER,
 
         pwd:
-            "1234@567Han"
+            process.env.APP_DB_PASSWORD
 
     };
 

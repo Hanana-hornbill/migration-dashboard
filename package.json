@@ -6,6 +6,7 @@
     "@sap/cds": "^9",
     "@sap/hana-client": "^2.28.20",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@
         <tnt:header>
 
     <tnt:ToolHeader>
-
+                                              
         <Button
             icon="sap-icon://menu2"
             type="Transparent"/>
@@ -28,7 +28,7 @@
 
         <SearchField
             width="25rem"
-            placeholder='Try quick actions like "Start assessment"'/>
+            placeholder='Search...'/>
 
         <ToolbarSpacer/>
 
@@ -92,14 +92,14 @@
 
     <Page
         id="homePage"
-        title="Migration Dashboard">
+        title="Dashboard">
 
         <content>
 
             <VBox class="sapUiMediumMargin">
 
                 <Title
-                    text="Welcome to Migration Dashboard"
+                    text="Welcome"
                     level="H2" />
 
                 <Text
@@ -111,15 +111,61 @@
                     press="onOpenConnectPage"
                     class="sapUiSmallMarginTop" />
 
-                <Button
-                    text="Saved Connections"
-                    icon="sap-icon://table-view"
-                    press="onOpenSavedConnections"
-                    class="sapUiSmallMarginTop" />
+                
+                    
 
-            </VBox>
+            
+            <Title
+                text=" Saved Connections"
+                level="H3"
+                class="sapUiMediumMarginTop" />
+            <Table
+                items="{connections>/}">
 
+                <columns>
+
+                    <Column>
+                        <Text text="Instance" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Host" />
+                    </Column>
+
+                    <Column>
+                        <Text text="Status" />
+                    </Column>
+
+                </columns>
+
+                <items>
+
+                    <ColumnListItem
+                        type="Active"
+                        press="onConnectionSelect">
+
+                        <cells>
+
+                            <Text
+                                text="{connections>INSTANCE_NAME}" />
+
+                            <Text
+                                text="{connections>HOSTNAME}" />
+
+                            <Text
+                                text="{connections>STATUS}" />
+
+                        </cells>
+
+                    </ColumnListItem>
+
+                </items>
+
+            </Table>
+
+        </VBox>
         </content>
+
 
     </Page>
 
@@ -147,13 +193,13 @@
 
                 <Input
                     id="portInput"
-                    placeholder="443" />
+                    placeholder="Port number" />
 
                 <Label text="Username" />
 
                 <Input
                     id="userInput"
-                    placeholder="DBADMIN" />
+                    placeholder="Username" />
 
                 <Label text="Password" />
 
@@ -235,7 +281,7 @@
     <!-- ===================================== -->
     <!-- SAVED CONNECTIONS PAGE -->
     <!-- ===================================== -->
-
+<!--
     <Page
         id="savedConnectionsPage"
         title="Saved Connections"
@@ -244,54 +290,11 @@
 
         <content>
 
-            <Table
-                items="{connections>/}">
-
-                <columns>
-
-                    <Column>
-                        <Text text="Instance" />
-                    </Column>
-
-                    <Column>
-                        <Text text="Host" />
-                    </Column>
-
-                    <Column>
-                        <Text text="Status" />
-                    </Column>
-
-                </columns>
-
-                <items>
-
-                    <ColumnListItem
-                        type="Active"
-                        press="onConnectionSelect">
-
-                        <cells>
-
-                            <Text
-                                text="{connections>INSTANCE_NAME}" />
-
-                            <Text
-                                text="{connections>HOSTNAME}" />
-
-                            <Text
-                                text="{connections>STATUS}" />
-
-                        </cells>
-
-                    </ColumnListItem>
-
-                </items>
-
-            </Table>
-
+            
         </content>
 
     </Page>
-
+-->
     <!-- ===================================== -->
     <!-- PRE-MIGRATION PAGE -->
     <!-- ===================================== -->
@@ -308,7 +311,7 @@
                     text="Pre-Migration Module" />
 
                 <Text
-                    text="Coming Soon..." />
+                    text=" " />
 
             </VBox>
 
@@ -316,6 +319,26 @@
 
     </Page>
 
+<!--migration page-->
+    <Page
+        id="migrationPage"
+        title="Migration">
+
+        <content>
+
+            <VBox class="sapUiMediumMargin">
+
+                <Title
+                    text="Migration Module" />
+
+                <Text
+                    text=" " />
+
+            </VBox>
+
+        </content>
+
+    </Page>
     <!-- ===================================== -->
     <!-- VALIDATION PAGE -->
     <!-- ===================================== -->
@@ -332,7 +355,7 @@
                     text="Validation Module" />
 
                 <Text
-                    text="Coming Soon..." />
+                    text=" " />
 
             </VBox>
 

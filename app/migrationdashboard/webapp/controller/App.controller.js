@@ -176,7 +176,7 @@ onConnectionSelect: function (oEvent) {
         onAssessmentPress: function () {
 
             this.byId("mainApp")
-                .to(this.byId("assessmentPage"));
+                .to(this.byId("homePage"));
 
         },
 
