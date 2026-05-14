@@ -4,6 +4,8 @@
     xmlns="sap.m"
     xmlns:tnt="sap.tnt">
 
+
+
     <tnt:ToolPage>
 
         <!-- ================================================= -->
@@ -300,7 +302,6 @@
 
                                 <!-- MEMORY USED TILE -->
 
-                                
                                 <GenericTile
                                     header="Memory Used">
 
@@ -312,29 +313,36 @@
                                     </TileContent>
 
                                 </GenericTile>
-                                
 
                             </HBox>
-                            <Button
-                                    text="View SQL Analysis"
-                                    press="onViewSqlAnalysis"
-                                    class="sapUiMediumMarginTop" />
-                            <Button
-                                    text="View Memory Configuration"
-                                    press="onViewMemoryConfig"
-                                    class="sapUiSmallMarginTop" />
-                                <Button
-                                    text="View Scale-Out Configuration"
-                                    press="onViewScaleOutConfig"
-                                    class="sapUiSmallMarginTop" />
-                                <!--<Button
-                                    text="View Archival Candidates"
-                                    press="onViewArchivalCandidates"
-                                    class="sapUiSmallMarginTop" />-->
+
+                            <HBox class="sapUiSmallMarginTop" wrap="Wrap" justifyContent="SpaceBetween">
+                                <VBox>
+                                    <Button
+                                        text="View SQL Analysis"
+                                        press="onViewSqlAnalysis" />
+                                    <Button
+                                        text="View Memory Configuration"
+                                        press="onViewMemoryConfig" />
+                                    <Button
+                                        text="View Scale-Out Configuration"
+                                        press="onViewScaleOutConfig" />
+                                </VBox>
+
+                                <VBox>
+                                    <Button
+                                        text="Run History"
+                                        icon="sap-icon://history"
+                                        type="Emphasized"
+                                        press="onViewRunHistory" />
+                                </VBox>
+                            </HBox>
 
                         </VBox>
 
                     </content>
+
+                    
 
                 </Page>
                 <!--sql analysis preview-->
@@ -592,6 +600,18 @@
                     </content>
 
                 </Page>
+
+                <!-- ========================================= -->
+                <!-- RUN HISTORY PAGE (SEPARATE XML) -->
+                <!-- ========================================= -->
+
+                <mvc:XMLView
+                    viewName="migrationdashboard.view.runHistory"
+                    id="runHistoryXml" />
+
+                <mvc:XMLView
+                    viewName="migrationdashboard.view.runHistoryDetail"
+                    id="runHistoryDetailXml" />
 
             </App>
 

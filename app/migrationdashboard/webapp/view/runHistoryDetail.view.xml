@@ -1,0 +1,106 @@
+<mvc:View
+    controllerName="migrationdashboard.controller.RunHistoryDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt">
+    <Page
+        id="runHistoryDetailPage"
+        title="Run Details"
+        showNavButton="true"
+        navButtonPress="onNavBack">
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <Title text="Run Details" level="H2" />
+
+                <Text
+                    class="sapUiSmallMarginBottom"
+                    text="Run summary KPIs, execution phases, findings, and execution log tail." />
+
+                <VBox visible="{= !!${runHistoryDetailModel>/run/runId}}" class="sapUiSmallMarginBottom">
+
+                    <!-- KPIs -->
+                    <HBox wrap="Wrap" justifyContent="Start" class="sapUiSmallMarginBottom">
+                        <GenericTile header="Duration" class="sapUiTinyMarginEnd">
+                            <TileContent>
+                                <NumericContent value="{runHistoryDetailModel>/kpis/durationDisplay}" />
+                            </TileContent>
+                        </GenericTile>
+                        <GenericTile header="Queries Executed" class="sapUiTinyMarginEnd">
+                            <TileContent>
+                                <NumericContent value="{runHistoryDetailModel>/kpis/queriesExecuted}" />
+                            </TileContent>
+                        </GenericTile>
+                        <GenericTile header="Objects Scanned" class="sapUiTinyMarginEnd">
+                            <TileContent>
+                                <NumericContent value="{runHistoryDetailModel>/kpis/objectsScanned}" />
+                            </TileContent>
+                        </GenericTile>
+                        <GenericTile header="Findings" class="sapUiTinyMarginEnd">
+                            <TileContent>
+                                <NumericContent value="{runHistoryDetailModel>/kpis/findingsCount}" />
+                            </TileContent>
+                        </GenericTile>
+                    </HBox>
+
+                </VBox>
+
+                <Panel headerText="Run Parameters" expandable="false" class="sapUiSmallMarginBottom">
+                    <content>
+                        <Table items="{runHistoryDetailModel>/params}">
+                            <columns>
+                                <Column width="15rem"><Text text="Parameter" /></Column>
+                                <Column><Text text="Value" /></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{runHistoryDetailModel>name}" />
+                                        <Text text="{runHistoryDetailModel>value}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <Panel headerText="Findings" expandable="false" class="sapUiSmallMarginBottom">
+                    <content>
+                        <Table items="{runHistoryDetailModel>/findings}">
+                            <columns>
+                                <Column width="4rem"><Text text="#" /></Column>
+                                <Column width="11rem"><Text text="Category" /></Column>
+                                <Column width="14rem"><Text text="Object" /></Column>
+                                <Column><Text text="Issue" /></Column>
+                                <Column width="9rem"><Text text="Severity" /></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{runHistoryDetailModel>idx}" />
+                                        <Text text="{runHistoryDetailModel>category}" />
+                                        <Text text="{runHistoryDetailModel>objectName}" />
+                                        <Text text="{runHistoryDetailModel>issue}" />
+                                        <Text text="{runHistoryDetailModel>severityDisplay}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+
+                <Panel headerText="Execution Log (tail)" expandable="false" class="sapUiSmallMarginBottom">
+                    <content>
+                        <TextArea
+                            value="{runHistoryDetailModel>/logTail}"
+                            rows="12"
+                            editable="false"
+                            width="100%" />
+                    </content>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
+

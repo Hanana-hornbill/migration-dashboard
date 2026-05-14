@@ -32,4 +32,14 @@ service MigrationService {
     entity QueryRegistry
         as projection on db.QUERY_REGISTRY;
 
+
+    entity RunHeaders
+        as projection on db.RUN_HEADERS;
+
+    entity RunFindings
+        as projection on db.RUN_FINDINGS;
+
+    entity RunLogs
+        as projection on db.RUN_LOGS;
+
 }

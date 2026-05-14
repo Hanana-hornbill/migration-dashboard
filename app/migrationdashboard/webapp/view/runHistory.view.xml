@@ -1,0 +1,136 @@
+<mvc:View
+    controllerName="migrationdashboard.controller.RunHistory"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt">
+    <Page
+        id="runHistoryPage"
+        title="Run History"
+        showNavButton="true"
+        navButtonPress="onNavBack">
+        <content>
+            <VBox class="sapUiMediumMargin">
+
+                <Title text="Assessment Run History" level="H2" />
+                <Text
+                    class="sapUiSmallMarginBottom"
+                    text="All assessment runs across your connected databases. Filter and click a row to view the full run details." />
+
+                <!-- KPI tiles -->
+                <HBox wrap="Wrap" justifyContent="Start" class="sapUiSmallMarginBottom">
+                    <GenericTile header="Total Runs" class="sapUiTinyMarginEnd">
+                        <TileContent>
+                            <NumericContent value="{runHistoryModel>/summary/totalRuns}" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile header="Successful" class="sapUiTinyMarginEnd">
+                        <TileContent>
+                            <NumericContent value="{runHistoryModel>/summary/successfulRuns}" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile header="Last Run" class="sapUiTinyMarginEnd" width="14rem">
+                        <TileContent>
+                            <VBox>
+                                <Text text="{runHistoryModel>/summary/lastRunDisplay}" />
+                                <Text text="{runHistoryModel>/summary/lastRunDatabase}" />
+                            </VBox>
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile header="Avg. Duration">
+                        <TileContent>
+                            <NumericContent value="{runHistoryModel>/summary/avgDurationDisplay}" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <!-- Filters + table -->
+                <Panel headerText="Recent Runs" expandable="false" class="sapUiSmallMarginBottom">
+                    <content>
+
+                        <FlexBox
+                            wrap="Wrap"
+                            direction="Row"
+                            alignItems="End"
+                            justifyContent="SpaceBetween"
+                            class="sapUiSmallMarginBottom">
+
+                            <SearchField
+                                width="20rem"
+                                placeholder="Search runs..."
+                                liveChange="onSearchLiveChange" />
+
+                            <Select
+                                width="12rem"
+                                selectedKey="all"
+                                change="onFilterChangeStatus"
+                                items="{runHistoryModel>/filters/statusItems}">
+                                <items>
+                                    <core:Item xmlns:core="sap.ui.core" key="{runHistoryModel>key}" text="{runHistoryModel>text}" />
+                                </items>
+                            </Select>
+
+                            <Select
+                                width="14rem"
+                                selectedKey="all"
+                                change="onFilterChangeType"
+                                items="{runHistoryModel>/filters/typeItems}">
+                                <items>
+                                    <core:Item xmlns:core="sap.ui.core" key="{runHistoryModel>key}" text="{runHistoryModel>text}" />
+                                </items>
+                            </Select>
+
+                            <Select
+                                width="14rem"
+                                selectedKey="30d"
+                                change="onFilterChangeRange"
+                                items="{runHistoryModel>/filters/timeItems}">
+                                <items>
+                                    <core:Item xmlns:core="sap.ui.core" key="{runHistoryModel>key}" text="{runHistoryModel>text}" />
+                                </items>
+                            </Select>
+
+                        </FlexBox>
+
+                        <Table
+                            id="runsTable"
+                            inset="false"
+                            items="{runHistoryModel>/runs}">
+
+                            <columns>
+                                <Column width="6rem"><Text text="Run ID" /></Column>
+                                <Column width="12rem"><Text text="Database" /></Column>
+                                <Column width="11rem"><Text text="Type" /></Column>
+                                <Column width="14rem"><Text text="Run Date" /></Column>
+                                <Column width="12rem"><Text text="Triggered By" /></Column>
+                                <Column width="9rem"><Text text="Duration" /></Column>
+                                <Column width="7rem"><Text text="Findings" /></Column>
+                                <Column width="8rem"><Text text="Status" /></Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem type="Active" press="onSelectRun">
+                                    <cells>
+                                        <Text text="{runHistoryModel>runId}" />
+                                        <Text text="{runHistoryModel>databaseName}" />
+                                        <Text text="{runHistoryModel>runType}" />
+                                        <Text text="{runHistoryModel>runDateDisplay}" />
+                                        <Text text="{runHistoryModel>triggeredBy}" />
+                                        <Text text="{runHistoryModel>durationDisplay}" />
+                                        <Text text="{runHistoryModel>findingsCount}" />
+                                        <Text text="{runHistoryModel>statusDisplay}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+
+                        </Table>
+
+                    </content>
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
+

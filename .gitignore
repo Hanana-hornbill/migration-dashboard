@@ -50,3 +50,6 @@ target/
 *.iml
 # added by cds
 .cdsrc-private.json
+
+# auto generated wildcard
+db/.env

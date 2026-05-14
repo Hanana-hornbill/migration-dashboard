@@ -304,6 +304,356 @@ cds.on('bootstrap', (app) => {
         }
 
     });
+    //////////////////////////
+
+    // =====================================================
+    // RUN HISTORY (assessment execution metadata)
+    // =====================================================
+
+    function sendNotFound(res, message) {
+
+        return res.status(404).json({
+
+            success: false,
+
+            error: message || 'Not found'
+
+        });
+
+    }
+
+    function formatDuration(seconds) {
+
+        if (seconds === null || seconds === undefined || isNaN(Number(seconds))) return '-';
+
+        const s = Number(seconds);
+
+        if (s < 60) return `${Math.round(s)}s`;
+
+        const m = Math.floor(s / 60);
+
+        const rem = Math.round(s - m * 60);
+
+        return `${m}m ${rem}s`;
+
+    }
+
+    // GET /runHistory?connectionId=...
+    app.get('/runHistory', (req, res) => {
+
+        const connectionId = req.query.connectionId;
+
+        const q = (req.query.q || '').toString().trim();
+
+        const status = req.query.status;
+
+        const runType = req.query.runType;
+
+        const range = req.query.range;
+
+        const appConn = hana.createConnection();
+
+        appConn.connect(APP_DB_CONFIG);
+
+        const where = [];
+
+        const params = [];
+
+        if (connectionId) {
+
+            where.push('RH.CONNECTION_ID = ?');
+
+            params.push(connectionId);
+
+        }
+
+        if (q) {
+
+            where.push('(RH.DATABASE_NAME LIKE ? OR RH.TRIGGERED_BY LIKE ? OR CAST(RH.ID AS NVARCHAR) LIKE ?)');
+
+            params.push(`%${q}%`, `%${q}%`, `%${q}%`);
+
+        }
+
+        if (status && status !== 'all') {
+
+            where.push('RH.STATUS = ?');
+
+            params.push(status);
+
+        }
+
+        if (runType && runType !== 'all') {
+
+            where.push('RH.RUN_TYPE = ?');
+
+            params.push(runType);
+
+        }
+
+        if (range && range !== 'all') {
+
+            const days = parseInt(range, 10);
+
+            // range values from UI: 30d, 7d, 90d
+            const parsedDays = isNaN(days) ? null : days;
+
+            if (parsedDays) {
+
+                where.push('RH.STARTED_AT >= ADD_DAYS(NOW(), -?)');
+
+                params.push(parsedDays);
+
+            }
+
+        }
+
+
+        const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+
+        const runsQuery = `
+            SELECT
+                RH.ID AS RUN_ID,
+                RH.DATABASE_NAME,
+                RH.RUN_TYPE,
+                RH.STARTED_AT,
+                RH.TRIGGERED_BY,
+                RH.DURATION_SECONDS,
+                RH.STATUS,
+                (SELECT COUNT(*) FROM MIGRATION_APP.RUN_FINDINGS F WHERE F.CONNECTION_ID = RH.CONNECTION_ID AND F.RUN_ID = RH.ID) AS FINDINGS_COUNT
+            FROM MIGRATION_APP.RUN_HEADERS RH
+            ${whereSql}
+            ORDER BY RH.STARTED_AT DESC
+            LIMIT 50
+        `;
+
+        const summaryQuery = `
+            SELECT
+                COUNT(*) AS TOTAL_RUNS,
+                SUM(CASE WHEN STATUS = 'SUCCESS' THEN 1 ELSE 0 END) AS SUCCESSFUL_RUNS,
+                MAX(STARTED_AT) AS LAST_STARTED_AT
+            FROM MIGRATION_APP.RUN_HEADERS
+            ${where.length ? `WHERE ${where.filter(w => !w.includes('q') && !w.includes('STARTED_AT >=')).join(' AND ')}` : ''}
+        `;
+
+        appConn.exec(runsQuery, params, (err, result) => {
+
+            if (err) {
+
+                return sendError(res, err);
+
+            }
+
+            // Summary (separate query for simplicity)
+            appConn.exec(summaryQuery, params, (err2, summaryResult) => {
+
+                if (err2) {
+
+                    return res.json({ success: true, summary: {}, runs: result });
+
+                }
+
+                const summaryRow = summaryResult?.[0] || {};
+
+                const lastTs = summaryRow.LAST_STARTED_AT;
+
+                const runs = (result || []).map(r => {
+
+                    const statusDisplay = r.STATUS ? r.STATUS : '-';
+
+                    return {
+
+                        runId: r.RUN_ID,
+                        databaseName: r.DATABASE_NAME,
+                        runType: r.RUN_TYPE,
+                        runDateDisplay: lastTs ? new Date(r.STARTED_AT).toLocaleString() : (r.STARTED_AT ? new Date(r.STARTED_AT).toLocaleString() : '-'),
+                        triggeredBy: r.TRIGGERED_BY,
+                        durationDisplay: formatDuration(r.DURATION_SECONDS),
+                        findingsCount: r.FINDINGS_COUNT || 0,
+                        statusDisplay
+
+                    };
+
+                });
+
+                res.json({
+
+                    success: true,
+
+                    summary: {
+
+                        totalRuns: summaryRow.TOTAL_RUNS || 0,
+
+                        successfulRuns: summaryRow.SUCCESSFUL_RUNS || 0,
+
+                        lastRunDisplay: lastTs ? new Date(lastTs).toLocaleDateString() : '-',
+
+                        lastRunDatabase: '-',
+
+                        avgDurationDisplay: '-' // computed client-side later or implement easily later
+
+                    },
+
+                    runs
+
+                });
+
+            });
+
+        });
+
+    });
+
+    // GET /runHistory/:runId?connectionId=...
+    app.get('/runHistory/:runId', (req, res) => {
+
+        const connectionId = req.query.connectionId;
+
+        const runId = req.params.runId;
+
+        const appConn = hana.createConnection();
+
+        appConn.connect(APP_DB_CONFIG);
+
+        const where = connectionId ? 'RH.CONNECTION_ID = ? AND RH.ID = ?' : 'RH.ID = ?';
+        const params = connectionId ? [connectionId, runId] : [runId];
+
+        const runQuery = `
+            SELECT
+                RH.ID AS RUN_ID,
+                RH.CONNECTION_ID,
+                RH.DATABASE_NAME,
+                RH.RUN_TYPE,
+                RH.TRIGGERED_BY,
+                RH.STATUS,
+                RH.STARTED_AT,
+                RH.ENDED_AT,
+                RH.DURATION_SECONDS
+            FROM MIGRATION_APP.RUN_HEADERS RH
+            WHERE ${where}
+        `;
+
+        appConn.exec(runQuery, params, (err, runResult) => {
+
+            if (err) {
+
+                return sendError(res, err);
+
+            }
+
+            const run = runResult?.[0];
+
+            if (!run) {
+
+                return sendNotFound(res, 'Run not found');
+
+            }
+
+            const findingsQuery = `
+                SELECT
+                    F.ID AS FINDING_ID,
+                    F.CATEGORY,
+                    F.OBJECT_NAME,
+                    F.ISSUE,
+                    F.SEVERITY
+                FROM MIGRATION_APP.RUN_FINDINGS F
+                WHERE ${connectionId ? 'F.CONNECTION_ID = ? AND F.RUN_ID = ?' : 'F.RUN_ID = ?'}
+                ORDER BY F.ID ASC
+            `;
+
+            const findingsParams = connectionId ? [connectionId, runId] : [runId];
+
+            const logQuery = `
+                SELECT
+                    L.LOG_TEXT,
+                    L.LOG_TAIL
+                FROM MIGRATION_APP.RUN_LOGS L
+                WHERE ${connectionId ? 'L.CONNECTION_ID = ? AND L.RUN_ID = ?' : 'L.RUN_ID = ?'}
+            `;
+
+            const logParams = connectionId ? [connectionId, runId] : [runId];
+
+            appConn.exec(findingsQuery, findingsParams, (errF, findingsResult) => {
+
+                if (errF) {
+
+                    return sendError(res, errF);
+
+                }
+
+                appConn.exec(logQuery, logParams, (errL, logResult) => {
+
+                    if (errL) {
+
+                        return sendError(res, errL);
+
+                    }
+
+                    const logRow = logResult?.[0] || {};
+
+                    const findings = (findingsResult || []).map((f, idx) => ({
+
+                        idx: idx + 1,
+                        category: f.CATEGORY,
+                        objectName: f.OBJECT_NAME,
+                        issue: f.ISSUE,
+                        severityDisplay: f.SEVERITY || '-'
+
+                    }));
+
+                    // Params + KPIs: reuse existing assessment summary tables as placeholders
+                    const kpi = {
+                        durationDisplay: formatDuration(run.DURATION_SECONDS),
+                        queriesExecuted: '-',
+                        objectsScanned: '-',
+                        findingsCount: findings.length
+                    };
+
+                    const params = [
+                        { name: 'Database', value: run.DATABASE_NAME },
+                        { name: 'Run Type', value: run.RUN_TYPE },
+                        { name: 'Triggered By', value: run.TRIGGERED_BY },
+                        { name: 'Status', value: run.STATUS },
+                        { name: 'Started At', value: run.STARTED_AT ? new Date(run.STARTED_AT).toLocaleString() : '-' },
+                        { name: 'Ended At', value: run.ENDED_AT ? new Date(run.ENDED_AT).toLocaleString() : '-' }
+                    ];
+
+                    res.json({
+
+                        success: true,
+
+                        data: {
+
+                            run: { runId: run.RUN_ID },
+
+                            kpis: kpi,
+
+                            params,
+
+                            findings,
+
+                            logTail: logRow.LOG_TAIL || ''
+
+                        }
+
+                    });
+
+                });
+
+            });
+
+        });
+
+    });
+
+
+
+
+
+
+
+    ////////////////
     //sql memory analysis
     app.get(
 

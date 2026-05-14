@@ -459,6 +459,55 @@ sap.ui.define([
             }
 
         },
+
+
+        onViewRunHistory: async function () {
+
+            // navigate and let RunHistory.controller load its data
+
+
+            // Keep connection scoping (per current selected connection)
+            const connectionId = this.selectedConnectionId;
+            if (!connectionId) {
+                MessageToast.show("Select a database connection first");
+                return;
+            }
+
+            window.selectedConnectionId = connectionId;
+
+            // Navigate to the separate run-history page
+            this.byId("mainApp").to(this.byId("runHistoryXml"));
+
+
+            // (Optional) trigger reload
+            const runHistoryController = this.byId("runHistoryXml").getController?.();
+            if (runHistoryController && runHistoryController._loadRunHistory) {
+                runHistoryController.selectedConnectionId = connectionId;
+                runHistoryController._loadRunHistory();
+            }
+
+        },
+
+        _navToRunHistoryDetail: function (detailModel) {
+            // attach the model to the detail view and show it
+            const detailView = this.byId("runHistoryDetailXml");
+            if (detailView && detailView.setModel) {
+                detailView.setModel(detailModel, "runHistoryDetailModel");
+            }
+            this.byId("mainApp").to(detailView);
+        },
+
+
+
+
+
+
+
+
+
+
+
+
         onViewSqlAnalysis: async function () {
 
             try {
