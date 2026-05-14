@@ -111,6 +111,11 @@
                     press="onOpenConnectPage"
                     class="sapUiSmallMarginTop" />
 
+                <Button
+                   text="Start Analysis"
+                   type="Emphasized"
+                   press="onStartAnalysis" />
+
                 
                     
 
@@ -120,6 +125,8 @@
                 level="H3"
                 class="sapUiMediumMarginTop" />
             <Table
+            id="connectionsTable"
+              
                 items="{connections>/}">
 
                 <columns>

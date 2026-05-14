@@ -1,8 +1,28 @@
 sap.ui.define([
+
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
-    "sap/m/MessageToast"
-], function (Controller, JSONModel, MessageToast) {
+    "sap/m/MessageToast",
+    "sap/ui/core/BusyIndicator",
+    "sap/m/MessageBox",
+    "sap/m/Dialog",
+    "sap/m/Button",
+    "sap/m/List",
+    "sap/m/StandardListItem"
+
+], function (
+
+    Controller,
+    JSONModel,
+    MessageToast,
+    BusyIndicator,
+    MessageBox,
+    Dialog,
+    Button,
+    List,
+    StandardListItem
+
+) {
 
     "use strict";
 
@@ -14,80 +34,311 @@ sap.ui.define([
 
         onInit: function () {
 
-    // -------------------------------------
-    // CHECK SESSION
-    // -------------------------------------
+            // -------------------------------------
+            // CHECK SESSION
+            // -------------------------------------
             const connectionModel =
-    new JSONModel([]);
+                new JSONModel([]);
 
-this.getView().setModel(
-    connectionModel,
-    "connections"
-);
-this.loadConnections();
-    const isLoggedIn =
-        localStorage.getItem("isLoggedIn");
+            this.getView().setModel(
+                connectionModel,
+                "connections"
+            );
+            this.loadConnections();
+            const isLoggedIn =
+                localStorage.getItem("isLoggedIn");
 
-    // -------------------------------------
-    // LOAD SAVED METRICS
-    // -------------------------------------
+            // -------------------------------------
+            // LOAD SAVED METRICS
+            // -------------------------------------
 
-    let savedMetrics = {
+            let savedMetrics = {
 
-        users: 0,
+                users: 0,
 
-        tables: 0,
+                tables: 0,
 
-        schemas: 0,
+                schemas: 0,
 
-        dbSize: 0
+                dbSize: 0
 
-    };
+            };
 
-    const storedMetrics =
-        localStorage.getItem("metricsData");
+            const storedMetrics =
+                localStorage.getItem("metricsData");
 
-    if (storedMetrics) {
+            if (storedMetrics) {
 
-        savedMetrics =
-            JSON.parse(storedMetrics);
+                savedMetrics =
+                    JSON.parse(storedMetrics);
 
-    }
+            }
 
-    // -------------------------------------
-    // CREATE MODEL
-    // -------------------------------------
+            // -------------------------------------
+            // CREATE MODEL
+            // -------------------------------------
 
-    const model = new JSONModel(
-        savedMetrics
-    );
+            const model = new JSONModel(
+                savedMetrics
+            );
 
-    this.getView().setModel(
-        model,
-        "metrics"
-    );
+            this.getView().setModel(
+                model,
+                "metrics"
+            );
 
-    // -------------------------------------
-    // WELCOME MESSAGE
-    // -------------------------------------
+            // -------------------------------------
+            // WELCOME MESSAGE
+            // -------------------------------------
 
-    if (isLoggedIn === "true") {
+            if (isLoggedIn === "true") {
 
-        MessageToast.show(
-            "Welcome Back"
+                MessageToast.show(
+                    "Welcome Back"
+                );
+
+            }
+
+            // -------------------------------------
+            // DEFAULT PAGE
+            // -------------------------------------
+
+            this.byId("mainApp")
+                .to(this.byId("assessmentPage"));
+
+        },
+onStartAnalysis: function () {
+
+    // =========================================
+    // GET CONNECTION MODEL
+    // =========================================
+
+    const oModel =
+        this.getView().getModel("connections");
+
+    // =========================================
+    // GET DATA
+    // =========================================
+
+    const aData =
+        oModel.getData();
+
+    console.log("Connections:", aData);
+
+    // =========================================
+    // VALIDATION
+    // =========================================
+
+    if (!aData || aData.length === 0) {
+
+        sap.m.MessageToast.show(
+            "No saved databases found"
         );
 
+        return;
+
     }
 
-    // -------------------------------------
-    // DEFAULT PAGE
-    // -------------------------------------
+    // =========================================
+    // CREATE LIST
+    // =========================================
 
-    this.byId("mainApp")
-        .to(this.byId("assessmentPage"));
+    const oList = new sap.m.List({
+
+        mode: "MultiSelect",
+
+        includeItemInSelection: true,
+
+        width: "100%"
+
+    });
+
+    // =========================================
+    // SET MODEL
+    // =========================================
+
+    oList.setModel(
+        oModel,
+        "connections"
+    );
+
+    // =========================================
+    // BIND ITEMS
+    // =========================================
+
+    oList.bindAggregation(
+
+        "items",
+
+        {
+
+            path: "connections>/",
+
+            template: new sap.m.StandardListItem({
+
+                title:
+                    "{connections>INSTANCE_NAME}",
+
+                description:
+                    "{connections>HOSTNAME}",
+
+                info:
+                    "{connections>STATUS}",
+
+                icon:
+                    "sap-icon://database"
+
+            })
+
+        }
+
+    );
+
+    // =========================================
+    // CREATE DIALOG
+    // =========================================
+
+    const oDialog = new sap.m.Dialog({
+
+        title: "Start Analysis",
+
+        contentWidth: "600px",
+
+        contentHeight: "400px",
+
+        draggable: true,
+
+        resizable: true,
+
+        content: [oList],
+
+        beginButton: new sap.m.Button({
+
+            text: "Start",
+
+            type: "Emphasized",
+
+            press: async () => {
+
+                const aSelected =
+                    oList.getSelectedItems();
+
+                if (aSelected.length === 0) {
+
+                    sap.m.MessageToast.show(
+                        "Select at least one database"
+                    );
+
+                    return;
+
+                }
+
+                sap.ui.core.BusyIndicator.show(0);
+
+                try {
+
+                    for (const item of aSelected) {
+
+                        const oData =
+                            item
+                                .getBindingContext("connections")
+                                .getObject();
+
+                        console.log("Selected DB:", oData);
+
+                        const response =
+                            await fetch(
+
+                                "/start-analysis",
+
+                                {
+
+                                    method: "POST",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json"
+
+                                    },
+
+                                    body: JSON.stringify({
+
+                                        host:
+                                            oData.HOSTNAME,
+
+                                        port:
+                                            oData.PORT,
+
+                                        user:
+                                            oData.USERID,
+
+                                        password:
+                                            oData.PASSWORD
+
+                                    })
+
+                                }
+
+                            );
+
+                        const result =
+                            await response.json();
+
+                        console.log(result);
+
+                    }
+
+                    sap.m.MessageBox.success(
+                        "Analysis completed"
+                    );
+
+                } catch (err) {
+
+                    console.error(err);
+
+                    sap.m.MessageBox.error(
+                        "Analysis failed"
+                    );
+
+                }
+
+                sap.ui.core.BusyIndicator.hide();
+
+                oDialog.close();
+
+            }
+
+        }),
+
+        endButton: new sap.m.Button({
+
+            text: "Cancel",
+
+            press: function () {
+
+                oDialog.close();
+
+            }
+
+        }),
+
+        afterClose: function () {
+
+            oDialog.destroy();
+
+        }
+
+    });
+
+    // =========================================
+    // OPEN DIALOG
+    // =========================================
+
+    oDialog.open();
 
 },
-loadConnections: async function () {
+ loadConnections: async function () {
 
     try {
 
@@ -96,6 +347,8 @@ loadConnections: async function () {
 
         const result =
             await response.json();
+
+        console.log(result);
 
         if (result.success) {
 
@@ -112,63 +365,63 @@ loadConnections: async function () {
     }
 
 },
-onOpenConnectPage: function () {
+        onOpenConnectPage: function () {
 
-    this.byId("mainApp")
-        .to(this.byId("connectPage"));
+            this.byId("mainApp")
+                .to(this.byId("connectPage"));
 
-},
-onOpenSavedConnections: function () {
+        },
+        onOpenSavedConnections: function () {
 
-    this.loadConnections();
+            this.loadConnections();
 
-    this.byId("mainApp")
-        .to(this.byId("savedConnectionsPage"));
+            this.byId("mainApp")
+                .to(this.byId("savedConnectionsPage"));
 
-},
-onNavBack: function () {
+        },
+        onNavBack: function () {
 
-    this.byId("mainApp")
-        .back();
+            this.byId("mainApp")
+                .back();
 
-},
-onConnectionSelect: function (oEvent) {
+        },
+        onConnectionSelect: function (oEvent) {
 
-    const item =
-        oEvent.getSource();
+            const item =
+                oEvent.getSource();
 
-    const data =
-        item.getBindingContext(
-            "connections"
-        ).getObject();
+            const data =
+                item.getBindingContext(
+                    "connections"
+                ).getObject();
 
-    console.log(data);
+            console.log(data);
 
-    // ---------------------------------
-    // AUTO-FILL INPUTS
-    // ---------------------------------
+            // ---------------------------------
+            // AUTO-FILL INPUTS
+            // ---------------------------------
 
-    this.byId("hostInput")
-        .setValue(data.HOSTNAME);
+            this.byId("hostInput")
+                .setValue(data.HOSTNAME);
 
-    this.byId("portInput")
-        .setValue(data.PORT);
+            this.byId("portInput")
+                .setValue(data.PORT);
 
-    this.byId("userInput")
-        .setValue(data.USERID);
+            this.byId("userInput")
+                .setValue(data.USERID);
 
-    this.byId("passwordInput")
-        .setValue(data.PASSWORD);
+            this.byId("passwordInput")
+                .setValue(data.PASSWORD);
 
-    // ---------------------------------
-    // OPTIONAL AUTO CONNECT
-    // ---------------------------------
+            // ---------------------------------
+            // OPTIONAL AUTO CONNECT
+            // ---------------------------------
 
-    this.onConnect();
-    this.byId("mainApp")
-    .to(this.byId("assessmentPage"));
+            this.onConnect();
+            this.byId("mainApp")
+                .to(this.byId("assessmentPage"));
 
-},
+        },
         // =========================================
         // SIDEBAR NAVIGATION
         // =========================================
