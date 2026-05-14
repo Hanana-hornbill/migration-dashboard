@@ -6,53 +6,59 @@
 
     <tnt:ToolPage>
 
-        <!-- Header -->
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
         <tnt:header>
 
-    <tnt:ToolHeader>
-                                              
-        <Button
-            icon="sap-icon://menu2"
-            type="Transparent"/>
+            <tnt:ToolHeader>
 
-        <Image
-            src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"
-            height="2rem"
-            class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+                <Button
+                    icon="sap-icon://menu2"
+                    type="Transparent" />
 
-        <Title
-            text="HANA Cloud Migration Assistant"
-            level="H3"/>
+                <Image
+                    src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"
+                    height="2rem"
+                    class="sapUiTinyMarginBegin sapUiTinyMarginEnd" />
 
-        <ToolbarSpacer/>
+                <Title
+                    text="HANA Cloud Migration Assistant"
+                    level="H3" />
 
-        <SearchField
-            width="25rem"
-            placeholder='Search...'/>
+                <ToolbarSpacer />
 
-        <ToolbarSpacer/>
+                <SearchField
+                    width="25rem"
+                    placeholder="Search..." />
 
-        <Button
-            icon="sap-icon://world"
-            type="Transparent"/>
+                <ToolbarSpacer />
 
-        <Button
-            icon="sap-icon://bell"
-            type="Transparent"/>
+                <Button
+                    icon="sap-icon://world"
+                    type="Transparent" />
 
-        <Button
-            icon="sap-icon://history"
-            type="Transparent"/>
+                <Button
+                    icon="sap-icon://bell"
+                    type="Transparent" />
 
-        <Avatar
-            initials="AN"
-            class="sapUiTinyMarginBegin"/>
+                <Button
+                    icon="sap-icon://history"
+                    type="Transparent" />
 
-    </tnt:ToolHeader>
+                <Avatar
+                    initials="AN"
+                    class="sapUiTinyMarginBegin" />
 
-</tnt:header>
+            </tnt:ToolHeader>
 
-        <!-- Sidebar -->
+        </tnt:header>
+
+        <!-- ================================================= -->
+        <!-- SIDEBAR -->
+        <!-- ================================================= -->
+
         <tnt:sideContent>
 
             <tnt:SideNavigation>
@@ -61,19 +67,19 @@
 
                     <tnt:NavigationListItem
                         text="Assessment Agent"
-                        select="onAssessmentPress"/>
+                        select="onAssessmentPress" />
 
                     <tnt:NavigationListItem
                         text="Pre-Migration Agent"
-                        select="onPreMigrationPress"/>
+                        select="onPreMigrationPress" />
 
                     <tnt:NavigationListItem
                         text="Migration Agent"
-                        select="onMigrationPress"/>
+                        select="onMigrationPress" />
 
                     <tnt:NavigationListItem
                         text="Migration Validation Agent"
-                        select="onValidationPress"/>
+                        select="onValidationPress" />
 
                 </tnt:NavigationList>
 
@@ -81,289 +87,513 @@
 
         </tnt:sideContent>
 
-        <!-- Main Content -->
+        <!-- ================================================= -->
+        <!-- MAIN CONTENT -->
+        <!-- ================================================= -->
+
         <tnt:mainContents>
 
             <App id="mainApp">
 
-    <!-- ===================================== -->
-    <!-- HOME PAGE -->
-    <!-- ===================================== -->
+                <!-- ========================================= -->
+                <!-- HOME PAGE -->
+                <!-- ========================================= -->
 
-    <Page
-        id="homePage"
-        title="Dashboard">
+                <Page
+                    id="homePage"
+                    title="Dashboard">
 
-        <content>
+                    <content>
 
-            <VBox class="sapUiMediumMargin">
+                        <VBox class="sapUiMediumMargin">
 
-                <Title
-                    text="Welcome"
-                    level="H2" />
-
-                <Text
-                    text="Manage and assess SAP HANA databases dynamically." />
-
-                <Button
-                    text="Connect Database"
-                    icon="sap-icon://database"
-                    press="onOpenConnectPage"
-                    class="sapUiSmallMarginTop" />
-
-                
-                    
-
-            
-            <Title
-                text=" Saved Connections"
-                level="H3"
-                class="sapUiMediumMarginTop" />
-            <Table
-                items="{connections>/}">
-
-                <columns>
-
-                    <Column>
-                        <Text text="Instance" />
-                    </Column>
-
-                    <Column>
-                        <Text text="Host" />
-                    </Column>
-
-                    <Column>
-                        <Text text="Status" />
-                    </Column>
-
-                </columns>
-
-                <items>
-
-                    <ColumnListItem
-                        type="Active"
-                        press="onConnectionSelect">
-
-                        <cells>
+                            <Title
+                                text="Welcome"
+                                level="H2" />
 
                             <Text
-                                text="{connections>INSTANCE_NAME}" />
+                                text="Manage and assess SAP HANA databases dynamically." />
 
-                            <Text
-                                text="{connections>HOSTNAME}" />
+                            <Button
+                                text="Connect Database"
+                                icon="sap-icon://database"
+                                press="onOpenConnectPage"
+                                class="sapUiSmallMarginTop" />
 
-                            <Text
-                                text="{connections>STATUS}" />
+                            <!-- ================================= -->
+                            <!-- SAVED CONNECTIONS -->
+                            <!-- ================================= -->
 
-                        </cells>
+                            <Title
+                                text="Saved Connections"
+                                level="H3"
+                                class="sapUiMediumMarginTop" />
 
-                    </ColumnListItem>
+                            <Table
+                                items="{connections>/}">
 
-                </items>
+                                <columns>
 
-            </Table>
+                                    <Column>
+                                        <Text text="Instance" />
+                                    </Column>
 
-        </VBox>
-        </content>
+                                    <Column>
+                                        <Text text="Host" />
+                                    </Column>
 
+                                    <Column>
+                                        <Text text="Status" />
+                                    </Column>
 
-    </Page>
+                                </columns>
 
-    <!-- ===================================== -->
-    <!-- CONNECT DATABASE PAGE -->
-    <!-- ===================================== -->
+                                <items>
 
-    <Page
-        id="connectPage"
-        title="Connect Database"
-        showNavButton="true"
-        navButtonPress="onNavBack">
+                                    <ColumnListItem
+                                        type="Active"
+                                        press="onConnectionSelect">
 
-        <content>
+                                        <cells>
 
-            <VBox class="sapUiMediumMargin">
+                                            <Text
+                                                text="{connections>INSTANCE_NAME}" />
 
-                <Label text="Host" />
+                                            <Text
+                                                text="{connections>HOSTNAME}" />
 
-                <Input
-                    id="hostInput"
-                    placeholder="Enter Host" />
+                                            <Text
+                                                text="{connections>STATUS}" />
 
-                <Label text="Port" />
+                                        </cells>
 
-                <Input
-                    id="portInput"
-                    placeholder="Port number" />
+                                    </ColumnListItem>
 
-                <Label text="Username" />
+                                </items>
 
-                <Input
-                    id="userInput"
-                    placeholder="Username" />
+                            </Table>
 
-                <Label text="Password" />
+                        </VBox>
 
-                <Input
-                    id="passwordInput"
-                    type="Password"
-                    placeholder="Enter Password" />
+                    </content>
 
-                <Button
-                    text="Connect"
-                    type="Emphasized"
-                    press="onConnect"
-                    class="sapUiSmallMarginTop" />
+                </Page>
 
-            </VBox>
+                <!-- ========================================= -->
+                <!-- CONNECT DATABASE PAGE -->
+                <!-- ========================================= -->
 
-        </content>
+                <Page
+                    id="connectPage"
+                    title="Connect Database"
+                    showNavButton="true"
+                    navButtonPress="onNavBack">
 
-    </Page>
+                    <content>
 
-    <!-- ===================================== -->
-    <!-- ASSESSMENT RESULTS PAGE -->
-    <!-- ===================================== -->
+                        <VBox class="sapUiMediumMargin">
 
-    <Page
-        id="assessmentPage"
-        title="Assessment Results"
-        showNavButton="true"
-        navButtonPress="onNavBack">
+                            <Label text="Host" />
 
-        <content>
+                            <Input
+                                id="hostInput"
+                                placeholder="Enter Host" />
 
-            <HBox
-                wrap="Wrap"
-                class="sapUiMediumMargin">
+                            <Label text="Port" />
 
-                <GenericTile
-                    header="Users">
+                            <Input
+                                id="portInput"
+                                placeholder="Port Number" />
 
-                    <TileContent>
+                            <Label text="Username" />
 
-                        <NumericContent
-                            value="{metrics>/users}" />
+                            <Input
+                                id="userInput"
+                                placeholder="Username" />
 
-                    </TileContent>
+                            <Label text="Password" />
 
-                </GenericTile>
+                            <Input
+                                id="passwordInput"
+                                type="Password"
+                                placeholder="Enter Password" />
 
-                <GenericTile
-                    header="Tables">
+                            <Button
+                                text="Connect"
+                                type="Emphasized"
+                                press="onConnect"
+                                class="sapUiSmallMarginTop" />
 
-                    <TileContent>
+                        </VBox>
 
-                        <NumericContent
-                            value="{metrics>/tables}" />
+                    </content>
 
-                    </TileContent>
+                </Page>
 
-                </GenericTile>
+                <!-- ========================================= -->
+                <!-- ASSESSMENT RESULTS PAGE -->
+                <!-- ========================================= -->
 
-                <GenericTile
-                    header="Schemas">
+                <Page
+                    id="assessmentPage"
+                    title="Assessment Results"
+                    showNavButton="true"
+                    navButtonPress="onNavBack">
 
-                    <TileContent>
+                    <content>
 
-                        <NumericContent
-                            value="{metrics>/schemas}" />
+                        <VBox class="sapUiMediumMargin">
 
-                    </TileContent>
+                            <Title
+                                text="Database Assessment Overview"
+                                level="H2"
+                                class="sapUiSmallMarginBottom" />
 
-                </GenericTile>
+                            <HBox
+                                wrap="Wrap"
+                                justifyContent="Start">
 
-            </HBox>
+                                <!-- USERS TILE -->
 
-        </content>
+                                <GenericTile
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                                    header="Users">
 
-    </Page>
+                                    <TileContent>
 
-    <!-- ===================================== -->
-    <!-- SAVED CONNECTIONS PAGE -->
-    <!-- ===================================== -->
-<!--
-    <Page
-        id="savedConnectionsPage"
-        title="Saved Connections"
-        showNavButton="true"
-        navButtonPress="onNavBack">
+                                        <NumericContent
+                                            value="{metrics>/users}" />
 
-        <content>
+                                    </TileContent>
 
-            
-        </content>
+                                </GenericTile>
 
-    </Page>
--->
-    <!-- ===================================== -->
-    <!-- PRE-MIGRATION PAGE -->
-    <!-- ===================================== -->
+                                <!-- TABLES TILE -->
 
-    <Page
-        id="preMigrationPage"
-        title="Pre-Migration">
+                                <GenericTile
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                                    header="Tables">
 
-        <content>
+                                    <TileContent>
 
-            <VBox class="sapUiMediumMargin">
+                                        <NumericContent
+                                            value="{metrics>/tables}" />
 
-                <Title
-                    text="Pre-Migration Module" />
+                                    </TileContent>
 
-                <Text
-                    text=" " />
+                                </GenericTile>
 
-            </VBox>
+                                <!-- SCHEMAS TILE -->
 
-        </content>
+                                <GenericTile
+                                    class="sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                                    header="Schemas">
 
-    </Page>
+                                    <TileContent>
 
-<!--migration page-->
-    <Page
-        id="migrationPage"
-        title="Migration">
+                                        <NumericContent
+                                            value="{metrics>/schemas}" />
 
-        <content>
+                                    </TileContent>
 
-            <VBox class="sapUiMediumMargin">
+                                </GenericTile>
 
-                <Title
-                    text="Migration Module" />
+                                <!-- MEMORY USED TILE -->
 
-                <Text
-                    text=" " />
+                                
+                                <GenericTile
+                                    header="Memory Used">
 
-            </VBox>
+                                    <TileContent>
 
-        </content>
+                                        <NumericContent
+                                            value="{metrics>/memoryUsed}" />
 
-    </Page>
-    <!-- ===================================== -->
-    <!-- VALIDATION PAGE -->
-    <!-- ===================================== -->
+                                    </TileContent>
 
-    <Page
-        id="validationPage"
-        title="Validation">
+                                </GenericTile>
+                                
 
-        <content>
+                            </HBox>
+                            <Button
+                                    text="View SQL Analysis"
+                                    press="onViewSqlAnalysis"
+                                    class="sapUiMediumMarginTop" />
+                            <Button
+                                    text="View Memory Configuration"
+                                    press="onViewMemoryConfig"
+                                    class="sapUiSmallMarginTop" />
+                                <Button
+                                    text="View Scale-Out Configuration"
+                                    press="onViewScaleOutConfig"
+                                    class="sapUiSmallMarginTop" />
+                                <!--<Button
+                                    text="View Archival Candidates"
+                                    press="onViewArchivalCandidates"
+                                    class="sapUiSmallMarginTop" />-->
 
-            <VBox class="sapUiMediumMargin">
+                        </VBox>
 
-                <Title
-                    text="Validation Module" />
+                    </content>
 
-                <Text
-                    text=" " />
+                </Page>
+                <!--sql analysis preview-->
+                <Page
+                    id="sqlAnalysisPage"
+                    title="SQL Memory Analysis"
+                    showNavButton="true"
+                    navButtonPress="onNavBack">
 
-            </VBox>
+                    <content>
 
-        </content>
+                        <Table
+                            items="{sqlAnalysis>/}">
 
-    </Page>
+                            <columns>
 
-</App>
+                                <Column>
+                                    <Text text="Avg Memory GB" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Peak Memory GB" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Execution Count" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Avg Exec MS" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="SQL Preview" />
+                                </Column>
+
+                            </columns>
+
+                            <items>
+
+                                <ColumnListItem>
+
+                                    <cells>
+
+                                        <Text text="{sqlAnalysis>AVG_MEMORY_GB}" />
+
+                                        <Text text="{sqlAnalysis>PEAK_MEMORY_GB}" />
+
+                                        <Text text="{sqlAnalysis>EXECUTION_COUNT}" />
+
+                                        <Text text="{sqlAnalysis>AVG_EXEC_MS}" />
+
+                                        <Text text="{sqlAnalysis>SQL_PREVIEW}" />
+
+                                    </cells>
+
+                                </ColumnListItem>
+
+                            </items>
+
+                        </Table>
+
+                    </content>
+
+                </Page>
+                <Page
+                    id="memoryConfigPage"
+                    title="Memory Configuration Analysis"
+                    showNavButton="true"
+                    navButtonPress="onNavBack">
+
+                    <content>
+
+                        <Table
+                            items="{memoryConfig>/}">
+
+                            <columns>
+
+                                <Column>
+                                    <Text text="File" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Section" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Key" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Value" />
+                                </Column>
+
+                                <Column>
+                                    <Text text="Layer" />
+                                </Column>
+
+                            </columns>
+
+                            <items>
+
+                                <ColumnListItem>
+
+                                    <cells>
+
+                                        <Text text="{memoryConfig>FILE_NAME}" />
+
+                                        <Text text="{memoryConfig>SECTION_NAME}" />
+
+                                        <Text text="{memoryConfig>CONFIG_KEY}" />
+
+                                        <Text text="{memoryConfig>CONFIG_VALUE}" />
+
+                                        <Text text="{memoryConfig>LAYER_NAME}" />
+
+                                    </cells>
+
+                                </ColumnListItem>
+
+                            </items>
+
+                        </Table>
+
+                    </content>
+
+                </Page>
+                <Page
+                        id="scaleOutConfigPage"
+                        title="Scale-Out Configuration"
+                        showNavButton="true"
+                        navButtonPress="onNavBack">
+
+                        <content>
+
+                            <Table
+                                items="{scaleOutConfig>/}">
+
+                                <columns>
+
+                                    <Column>
+                                        <Text text="File" />
+                                    </Column>
+
+                                    <Column>
+                                        <Text text="Section" />
+                                    </Column>
+
+                                    <Column>
+                                        <Text text="Key" />
+                                    </Column>
+
+                                    <Column>
+                                        <Text text="Value" />
+                                    </Column>
+
+                                    <Column>
+                                        <Text text="Layer" />
+                                    </Column>
+
+                                </columns>
+
+                                <items>
+
+                                    <ColumnListItem>
+
+                                        <cells>
+
+                                            <Text text="{scaleOutConfig>FILE_NAME}" />
+
+                                            <Text text="{scaleOutConfig>SECTION_NAME}" />
+
+                                            <Text text="{scaleOutConfig>CONFIG_KEY}" />
+
+                                            <Text text="{scaleOutConfig>CONFIG_VALUE}" />
+
+                                            <Text text="{scaleOutConfig>LAYER_NAME}" />
+
+                                        </cells>
+
+                                    </ColumnListItem>
+
+                                </items>
+
+                            </Table>
+
+                        </content>
+
+                </Page>
+                <!-- ========================================= -->
+                <!-- PRE-MIGRATION PAGE -->
+                <!-- ========================================= -->
+
+                <Page
+                    id="preMigrationPage"
+                    title="Pre-Migration">
+
+                    <content>
+
+                        <VBox class="sapUiMediumMargin">
+
+                            <Title
+                                text="Pre-Migration Module" />
+
+                            <Text text="" />
+
+                        </VBox>
+
+                    </content>
+
+                </Page>
+
+                <!-- ========================================= -->
+                <!-- MIGRATION PAGE -->
+                <!-- ========================================= -->
+
+                <Page
+                    id="migrationPage"
+                    title="Migration">
+
+                    <content>
+
+                        <VBox class="sapUiMediumMargin">
+
+                            <Title
+                                text="Migration Module" />
+
+                            <Text text="" />
+
+                        </VBox>
+
+                    </content>
+
+                </Page>
+
+                <!-- ========================================= -->
+                <!-- VALIDATION PAGE -->
+                <!-- ========================================= -->
+
+                <Page
+                    id="validationPage"
+                    title="Validation">
+
+                    <content>
+
+                        <VBox class="sapUiMediumMargin">
+
+                            <Title
+                                text="Validation Module" />
+
+                            <Text text="" />
+
+                        </VBox>
+
+                    </content>
+
+                </Page>
+
+            </App>
 
         </tnt:mainContents>
 

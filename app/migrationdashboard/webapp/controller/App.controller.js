@@ -14,161 +14,266 @@ sap.ui.define([
 
         onInit: function () {
 
-    // -------------------------------------
-    // CHECK SESSION
-    // -------------------------------------
+            // -------------------------------------
+            // CHECK SESSION
+            // -------------------------------------
             const connectionModel =
-    new JSONModel([]);
+                new JSONModel([]);
 
-this.getView().setModel(
-    connectionModel,
-    "connections"
-);
-this.loadConnections();
-    const isLoggedIn =
-        localStorage.getItem("isLoggedIn");
+            this.getView().setModel(
+                connectionModel,
+                "connections"
+            );
+            this.loadConnections();
+            const isLoggedIn =
+                localStorage.getItem("isLoggedIn");
 
-    // -------------------------------------
-    // LOAD SAVED METRICS
-    // -------------------------------------
+            // -------------------------------------
+            // LOAD SAVED METRICS
+            // -------------------------------------
 
-    let savedMetrics = {
+            let savedMetrics = {
 
-        users: 0,
+                users: 0,
 
-        tables: 0,
+                tables: 0,
 
-        schemas: 0,
+                schemas: 0,
 
-        dbSize: 0
+                memoryUsed: 0
 
-    };
+            };
+            const sqlModel =
+                new JSONModel([]);
 
-    const storedMetrics =
-        localStorage.getItem("metricsData");
+            this.getView().setModel(
+                sqlModel,
+                "sqlAnalysis"
+            );
+            const memoryConfigModel =
+                new JSONModel([]);
 
-    if (storedMetrics) {
+            this.getView().setModel(
 
-        savedMetrics =
-            JSON.parse(storedMetrics);
+                memoryConfigModel,
 
-    }
+                "memoryConfig"
 
-    // -------------------------------------
-    // CREATE MODEL
-    // -------------------------------------
+            );
+            const scaleOutModel =
+                new JSONModel([]);
 
-    const model = new JSONModel(
-        savedMetrics
-    );
+            this.getView().setModel(
 
-    this.getView().setModel(
-        model,
-        "metrics"
-    );
+                scaleOutModel,
 
-    // -------------------------------------
-    // WELCOME MESSAGE
-    // -------------------------------------
+                "scaleOutConfig"
 
-    if (isLoggedIn === "true") {
+            );
+            const storedMetrics =
+                localStorage.getItem("metricsData");
 
-        MessageToast.show(
-            "Welcome Back"
-        );
+            if (storedMetrics) {
 
-    }
+                savedMetrics =
+                    JSON.parse(storedMetrics);
 
-    // -------------------------------------
-    // DEFAULT PAGE
-    // -------------------------------------
+            }
 
-    this.byId("mainApp")
-        .to(this.byId("assessmentPage"));
+            // -------------------------------------
+            // CREATE MODEL
+            // -------------------------------------
 
-},
-loadConnections: async function () {
+            const model = new JSONModel(
+                savedMetrics
+            );
 
-    try {
+            this.getView().setModel(
+                model,
+                "metrics"
+            );
 
-        const response =
-            await fetch("/connections");
+            // -------------------------------------
+            // WELCOME MESSAGE
+            // -------------------------------------
 
-        const result =
-            await response.json();
+            if (isLoggedIn === "true") {
 
-        if (result.success) {
+                MessageToast.show(
+                    "Welcome Back"
+                );
 
-            this.getView()
-                .getModel("connections")
-                .setData(result.data);
+            }
 
-        }
+            // -------------------------------------
+            // DEFAULT PAGE
+            // -------------------------------------
 
-    } catch (err) {
+            this.byId("mainApp")
+                .to(this.byId("homePage"));
 
-        console.error(err);
+        },
+        loadConnections: async function () {
 
-    }
+            try {
 
-},
-onOpenConnectPage: function () {
+                const response =
+                    await fetch("/connections");
 
-    this.byId("mainApp")
-        .to(this.byId("connectPage"));
+                const result =
+                    await response.json();
 
-},
-onOpenSavedConnections: function () {
+                if (result.success) {
 
-    this.loadConnections();
+                    this.getView()
+                        .getModel("connections")
+                        .setData(result.data);
 
-    this.byId("mainApp")
-        .to(this.byId("savedConnectionsPage"));
 
-},
-onNavBack: function () {
 
-    this.byId("mainApp")
-        .back();
+                }
 
-},
-onConnectionSelect: function (oEvent) {
+            } catch (err) {
 
-    const item =
-        oEvent.getSource();
+                console.error(err);
 
-    const data =
-        item.getBindingContext(
-            "connections"
-        ).getObject();
+            }
 
-    console.log(data);
+        },
+        // =========================================
+        // OPEN CONNECT PAGE
+        // =========================================
 
-    // ---------------------------------
-    // AUTO-FILL INPUTS
-    // ---------------------------------
+        onOpenConnectPage: function () {
 
-    this.byId("hostInput")
-        .setValue(data.HOSTNAME);
+            this.byId("mainApp")
+                .to(this.byId("connectPage"));
 
-    this.byId("portInput")
-        .setValue(data.PORT);
+        },
 
-    this.byId("userInput")
-        .setValue(data.USERID);
+        // =========================================
+        // NAVIGATE BACK
+        // =========================================
 
-    this.byId("passwordInput")
-        .setValue(data.PASSWORD);
+        onNavBack: function () {
 
-    // ---------------------------------
-    // OPTIONAL AUTO CONNECT
-    // ---------------------------------
+            this.byId("mainApp")
+                .back();
 
-    this.onConnect();
-    this.byId("mainApp")
-    .to(this.byId("assessmentPage"));
+        },
+        onConnectionSelect: async function (oEvent) {
 
-},
+            const item =
+                oEvent.getSource();
+
+            const data =
+
+                item
+
+                    .getBindingContext("connections")
+
+                    .getObject();
+
+            console.log(data);
+            this.selectedConnectionId = data.ID;
+            // =========================================
+            // AUTO FILL INPUTS
+            // =========================================
+
+            this.byId("hostInput")
+                .setValue(data.HOSTNAME);
+
+            this.byId("portInput")
+                .setValue(data.PORT);
+
+            this.byId("userInput")
+                .setValue(data.USERID);
+
+            this.byId("passwordInput")
+                .setValue(data.PASSWORD);
+
+            // =========================================
+            // RUN CONNECTION
+            // =========================================
+
+            await this.onConnect();
+
+            // =========================================
+            // NAVIGATE TO RESULTS PAGE
+            // =========================================
+
+            this.byId("mainApp")
+                .to(this.byId("assessmentPage"));
+
+        },
+        onViewMemoryConfig: async function () {
+
+            try {
+
+                const response = await fetch(
+
+                    `/memoryConfig/${this.selectedConnectionId}`
+
+                );
+
+                const result =
+                    await response.json();
+
+                if (result.success) {
+
+                    this.getView()
+
+                        .getModel("memoryConfig")
+
+                        .setData(result.data);
+
+                    this.byId("mainApp")
+
+                        .to(this.byId("memoryConfigPage"));
+
+                }
+
+            } catch (err) {
+
+                console.error(err);
+
+            }
+
+        },
+        onViewScaleOutConfig: async function () {
+
+            try {
+
+                const response = await fetch(
+
+                    `/scaleOutConfig/${this.selectedConnectionId}`
+
+                );
+
+                const result =
+                    await response.json();
+
+                if (result.success) {
+
+                    this.getView()
+
+                        .getModel("scaleOutConfig")
+
+                        .setData(result.data);
+
+                    this.byId("mainApp")
+
+                        .to(this.byId("scaleOutConfigPage"));
+
+                }
+
+            } catch (err) {
+
+                console.error(err);
+
+            }
+
+        },
         // =========================================
         // SIDEBAR NAVIGATION
         // =========================================
@@ -176,7 +281,7 @@ onConnectionSelect: function (oEvent) {
         onAssessmentPress: function () {
 
             this.byId("mainApp")
-                .to(this.byId("homePage"));
+                .to(this.byId("assessmentPage"));
 
         },
 
@@ -288,8 +393,7 @@ onConnectionSelect: function (oEvent) {
                     this.getView()
                         .getModel("metrics")
                         .setData(result.data);
-                    this.byId("mainApp")
-                        .to(this.byId("assessmentPage"));
+
                     // SAVE SESSION
 
                     localStorage.setItem(
@@ -316,6 +420,10 @@ onConnectionSelect: function (oEvent) {
                         JSON.stringify(result.data)
 
                     );
+                    this.loadConnections();
+
+                    this.byId("mainApp")
+                        .to(this.byId("assessmentPage"));
 
                     MessageToast.show(
                         "Assessment Complete"
@@ -350,7 +458,41 @@ onConnectionSelect: function (oEvent) {
 
             }
 
-        }
+        },
+        onViewSqlAnalysis: async function () {
+
+            try {
+
+                const response = await fetch(
+
+                    `/sqlAnalysis/${this.selectedConnectionId}`
+
+                );
+
+                const result =
+                    await response.json();
+
+                if (result.success) {
+
+                    this.getView()
+
+                        .getModel("sqlAnalysis")
+
+                        .setData(result.data);
+
+                    this.byId("mainApp")
+
+                        .to(this.byId("sqlAnalysisPage"));
+
+                }
+
+            } catch (err) {
+
+                console.error(err);
+
+            }
+
+        },
 
     });
 
